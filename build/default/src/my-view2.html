@@ -1,0 +1,48 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view2">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      input[type=file]{
+
+      }
+    </style>
+
+    <div class="main">
+
+      <p>Create a new student resource</p>
+
+      <paper-dropdown-menu label="Select type of resource" no-animations="" dynamic-align="" id="">
+        <paper-listbox slot="dropdown-content" class="dropdown-content" selected="0">
+           <paper-item>Article</paper-item>
+           <paper-item>Book</paper-item>
+           <paper-item>Document</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+      <input type="file" value="insert" accept=".jpg">
+
+      <paper-button raised="">Create</paper-button>
+
+    </div>
+
+  </template>
+
+  <script>
+    class MyView2 extends Polymer.Element {
+      static get is() { return 'my-view2'; }
+    }
+
+    window.customElements.define(MyView2.is, MyView2);
+  </script>
+</dom-module>
