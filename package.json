@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "lint": "npm run lint:javascript && polymer lint",
     "lint:javascript": "eslint . --ext js,html --ignore-path .gitignore",
     "test": "polymer test",
