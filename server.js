@@ -32,6 +32,6 @@ app.get('*', function(req, res){
   res.sendFile("index.html", {root: '.'});
 });
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log('We are live on ' + port);
 });
