@@ -1,0 +1,80 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view1">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      .main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+      paper-card {
+        width: 300px;
+        height: 200px;
+        margin: 5px;
+      }
+      paper-card .card-actions:hover {
+        background-color: #ccc;
+      }
+    </style>
+
+    <div class="main">
+
+      <template is="dom-repeat" items="[[items]]" as="items">
+
+        <paper-card heading="[[items.heading]]">
+          <div class="card-content"></div>
+          <div class="card-actions">
+            <a href="[[items.link]]"><p>[[items.linkText]]</p></a>
+          </div>
+        </paper-card>
+
+      </template>
+
+    </div>
+
+  </template>
+
+  <script>
+    class MyView1 extends Polymer.Element {
+      static get is() { return 'my-view1'; }
+
+      static get properties(){
+        return {
+          items: {
+            type: Array,
+            value: function() {
+              return [
+                {
+                  "heading": "Create Student Resource",
+                  "linkText": "Go to create student resource",
+                  "link": "/view2"
+                },
+                {
+                  "heading": "List Available Resource",
+                  "linkText": "Go to available resources",
+                  "link": "/view3"
+                },
+                {
+                  "heading": "Edit Students",
+                  "linkText": "Go to edit students",
+                  "link": "/view4"
+                }
+              ];
+            }
+          }
+        };
+      }
+    }
+
+    window.customElements.define(MyView1.is, MyView1);
+  </script>
+</dom-module>
