@@ -29,8 +29,7 @@
       "name": "es5-bundled",
       "bundle": true,
       "js": {
-        "minify": true,
-        "compile": true
+        "minify": true
       },
       "css": {
         "minify": true

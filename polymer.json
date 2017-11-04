@@ -23,7 +23,7 @@
     {
       "name": "es5-bundled",
       "bundle": true,
-      "js": {"minify": true, "compile": true},
+      "js": {"minify": true},
       "css": {"minify": true},
       "html": {"minify": true}
     }
