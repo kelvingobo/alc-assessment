@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
@@ -75,6 +76,11 @@
         background-color: var(--accent-color);
       }
       @media (max-width: 770px) {
+        .main {
+          flex-wrap: wrap;
+          align-items: flex-start;
+          justify-content: center;
+        }
         paper-card {
           width: 250px;
           min-height: 250px
@@ -83,7 +89,8 @@
       @media (max-width: 650px) {
         .main {
           flex-wrap: wrap;
-          justify-content: flex-start;
+          align-items: flex-start;
+          justify-content: center;
         }
         paper-card {
           width: 250px;
@@ -96,7 +103,8 @@
       auto
       url="/list-available-resources"
       handle-as="json"
-      last-response="{{response}}"></iron-ajax>
+      last-response="{{response}}"
+      loading="{{loading}}"></iron-ajax>
     
     <paper-dialog id="dialog">
       <h3>[[selectedResource.title]]</h3>
@@ -115,6 +123,12 @@
     </paper-dialog>
     
     <h2>Available resources</h2>
+
+    <div hidden$="[[!loading]]">
+      
+      <paper-spinner active="[[loading]]"></paper-spinner>
+      
+    </div>
 
     <div class="main">
 
@@ -150,6 +164,9 @@
           },
           selectedResource: {
             type: Object
+          },
+          loading: {
+            type: Boolean
           },
           items: {
             type: Array,
@@ -192,12 +209,11 @@
           ia.url = '/delete-resource';
           ia.generateRequest();
           ia.addEventListener('last-response-changed', this.lastResponseChanged());
-          this.$.deleteDialog.opened = false;
         }
       }
 
-      lastResponseChanged(e){
-        console.log(e);
+      lastResponseChanged(){
+        this.$.deleteDialog.opened = false;
         this.$.toast.opened = true;
         setTimeout(() => {
           window.location.reload();

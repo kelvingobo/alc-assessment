@@ -1,6 +1,4 @@
-config/
 node_modules/
 test/
 images/
-build/
 bower_components/

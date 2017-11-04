@@ -1,9 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="my-icons.html">
@@ -46,9 +48,16 @@
       auto
       url="/list-users"
       handle-as="json"
-      last-response="{{res}}"></iron-ajax>
+      last-response="{{res}}"
+      loading="{{loading}}"></iron-ajax>
 
       <h2>Edit students</h2>
+
+      <div hidden$="[[!loading]]">
+        
+        <paper-spinner active="[[loading]]"></paper-spinner>
+        
+      </div>
 
     <div class="main">
 
@@ -90,6 +99,8 @@
 
     </div>
 
+    <paper-toast id="toast"></paper-toast>
+
     <paper-fab icon="my-icons:add" alt="create a new note" title="create a new note" on-tap="create"></paper-fab>
 
   </template>
@@ -102,12 +113,14 @@
       static get properties(){
         return {
           res: {
-            type: Array,
-            observer: '_respChanged'
+            type: Array
           },
           selectedUser: {
             type: Object
-          }
+          },
+          loading: {
+            type: Boolean
+          },
         };
       }
       create(){
@@ -121,7 +134,7 @@
         ia.body = {email: this.$.email.value, displayName: this.$.fullName.value, password: this.$.pass.value};
         ia.url = '/create-student';
         ia.generateRequest();
-        window.location.reload();
+        ia.addEventListener('last-response-changed', this.lastResponseChanged('Student created successfully'));
       }
       updateStudent(){
         var ia = document.createElement('iron-ajax');
@@ -131,13 +144,10 @@
         ia.body = {email: this.$.eEmail.value, displayName: this.$.eFullName.value, password: this.$.ePass.value, uid: this.selectedUser.uid};
         ia.url = '/update-student';
         ia.generateRequest();
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        ia.addEventListener('last-response-changed', this.lastResponseChanged('Student details updated successfully'));
       }
       editDetails(e){
         this.selectedUser = e.model.res;
-        console.log(this.selectedUser);
         this.$.eEmail.value = this.selectedUser.email;
         this.$.eFullName.value = this.selectedUser.displayName;
         this.$.edit.opened = true;
@@ -145,12 +155,10 @@
 
       delete(e){
         let uid = e.model.res.uid;
-        console.log(uid);
         selectedUid = uid;
         this.$.delete.opened = true;
       }
       deleteStudent(){
-        console.log(selectedUid);
         if(selectedUid != null){
           var ia = document.createElement('iron-ajax');
           ia.contentType = 'application/x-www-form-urlencoded';
@@ -159,12 +167,19 @@
           ia.body = {uid: selectedUid};
           ia.url = '/delete-student';
           ia.generateRequest();
-          window.location.reload();
+          ia.addEventListener('last-response-changed', this.lastResponseChanged('Student deleted successfully'));
+          
         }
       }
 
-      _respChanged(res){
-        console.log(res);
+      lastResponseChanged(response){
+        this.$.delete.opened = false;
+        this.$.create.opened = false;
+        this.$.edit.opened = false;
+        this.$.toast.show({text: response, duration: 3000});
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       }
     }
 

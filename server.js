@@ -13,7 +13,7 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // Serve static files from the main directory
-app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/build/es5-bundled'));
 
 require('./app/routes')(app);
 // return the index.html for all routes

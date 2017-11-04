@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
@@ -25,6 +26,9 @@
         align-items: center;
         justify-content: center;
       }
+      iron-form, form {
+        width: 100%;
+      }
       paper-dropdown-menu {
         display: block;
         margin: 5px;
@@ -42,12 +46,14 @@
         margin-top: 10px;
         width: 50%;
       }
-      paper-input {
+      paper-input, paper-textarea {
+        width: inherit;
         --paper-input-container-focus-color: var(--app-secondary-color);
       }
-      @media (max-width: 400px){
+      @media (max-width: 450px){
         .main {
           width: 100%;
+          justify-content: flex-start;
         }
       }
     </style>
@@ -68,9 +74,8 @@
         <form method="get" action="">
 
           <paper-input name="title" label="Enter title" hidden="[[!articleSelected]]"></paper-input>
-          <paper-input name="text" label="Enter text" hidden="[[!articleSelected]]"></paper-input>
-
-
+          <paper-textarea name="text" label="Enter text" hidden="[[!articleSelected]]"></paper-textarea>
+          
         </form>
       </iron-form>
 

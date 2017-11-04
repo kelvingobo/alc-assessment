@@ -12,8 +12,9 @@ var ref = db.ref('student-resources');
 module.exports = function(app) {
   // create a new student
   app.post('/create-student', (req, res) => {
+    var id = Date.now().toString();
     admin.auth().createUser({
-      uid: Date.now(),
+      uid: id,
       email: req.body.email,
       displayName: req.body.displayName,
       password: req.body.password
