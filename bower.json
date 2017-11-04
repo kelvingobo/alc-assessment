@@ -23,7 +23,10 @@
     "paper-listbox": "PolymerElements/paper-listbox#^2.0.0",
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.5",
     "paper-dialog": "PolymerElements/paper-dialog#^2.0.0",
-    "paper-fab": "PolymerElements/paper-fab#^2.0.0"
+    "paper-fab": "PolymerElements/paper-fab#^2.0.0",
+    "iron-form": "PolymerElements/iron-form#^2.0.1",
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^2.1.0"
   },
   "resolutions": {
     "polymer": "^2.0.0"

@@ -1,0 +1,219 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-list-resources">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      .main {
+        display: flex;
+        -webkit-display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+      paper-card {
+        width: 250px;
+        height: auto;
+        margin: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3; /* number of lines to show */
+      line-height: 1.5;        /* fallback */
+      max-height: 1.5*3; 
+      }
+      paper-dialog {
+        padding: 10px;
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      paper-dialog h2 {
+        width: inherit;
+      }
+      paper-dialog-scrollable {
+        width: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+      
+      paper-card .card-content{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3; /* number of lines to show */
+      line-height: 1.5;        /* fallback */
+      max-height: 1.5*3;       /* fallback */     
+      }
+      paper-button {
+        color: var(--accent-color);
+      }
+      .card-actions a:link, a:visited {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        text-decoration: none;
+        color: grey;
+        width: 100%;
+        cursor: pointer;
+      }
+      .card-actions a:hover {
+        background-color: var(--accent-color);
+      }
+      @media (max-width: 770px) {
+        paper-card {
+          width: 250px;
+          min-height: 250px
+        }
+      }
+      @media (max-width: 650px) {
+        .main {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+        }
+        paper-card {
+          width: 250px;
+          min-height: 200px
+        }
+      }
+    </style>
+
+    <iron-ajax
+      auto
+      url="/list-available-resources"
+      handle-as="json"
+      last-response="{{response}}"></iron-ajax>
+    
+    <paper-dialog id="dialog">
+      <h3>[[selectedResource.title]]</h3>
+      <paper-dialog-scrollable>
+        <div>[[selectedResource.text]]</div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button on-tap="closeDialog">Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="deleteDialog">
+      <h2>Are you sure you want to delete this resource?</h2>
+      <paper-button on-tap="deleteResource">yes</paper-button>
+      <paper-button dialog-dismiss>no</paper-button>
+    </paper-dialog>
+    
+    <h2>Available resources</h2>
+
+    <div class="main">
+
+      <template is="dom-repeat" items="[[response]]" as="resource">
+
+        <paper-card heading="[[resource.title]]">
+          <div class="card-content">
+            <p>[[resource.text]]</p>
+          </div>
+          <div class="card-actions">
+            <paper-button on-tap="viewResource">open</paper-button>
+            <paper-button on-tap="delete">delete</paper-button>
+          </div>
+        </paper-card>
+
+      </template>
+
+    
+    <paper-toast id="toast" text="Resource deleted successfully"></paper-toast>
+    
+
+  </template>
+
+  <script>
+    var selectedRes = null;
+    class MyListResources extends Polymer.Element {
+      static get is() { return 'my-list-resources'; }
+
+      static get properties(){
+        return {
+          response: {
+            type: Array
+          },
+          selectedResource: {
+            type: Object
+          },
+          items: {
+            type: Array,
+            value: function() {
+              return [
+                {
+                  "heading": "Articles",
+                  "linkText": "Go to articles",
+                  "link": ""
+                },
+                {
+                  "heading": "Documents",
+                  "linkText": "Go to docs",
+                  "link": ""
+                },
+                {
+                  "heading": "Video",
+                  "linkText": "Go to video",
+                  "link": ""
+                }
+              ];
+            }
+          }
+        };
+      }
+
+      delete(e){
+        selectedRes = e.model.resource;
+        console.log(selectedRes);
+        this.$.deleteDialog.opened = true;
+      }
+
+      deleteResource(){
+        if(selectedRes != null){
+          var ia = document.createElement('iron-ajax');
+          ia.contentType = 'application/x-www-form-urlencoded';
+          ia.method = 'post';
+          ia.handleAs = 'json';
+          ia.body = selectedRes;
+          ia.url = '/delete-resource';
+          ia.generateRequest();
+          ia.addEventListener('last-response-changed', this.lastResponseChanged());
+          this.$.deleteDialog.opened = false;
+        }
+      }
+
+      lastResponseChanged(e){
+        console.log(e);
+        this.$.toast.opened = true;
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+
+      closeDialog(){
+        this.$.dialog.opened = false;
+      }
+
+      viewResource(e){
+        this.selectedResource = e.model.resource;
+        this.$.dialog.opened = true;
+      }
+    }
+
+    window.customElements.define(MyListResources.is, MyListResources);
+  </script>
+</dom-module>

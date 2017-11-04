@@ -2,12 +2,13 @@
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="my-icons.html">
 
-<dom-module id="my-view4">
+<dom-module id="my-edit-student">
   <template>
     <style include="shared-styles">
       :host {
@@ -26,21 +27,18 @@
         height: 200px;
         margin: 5px;
       }
-      paper-dialog {
-        position: absolute;
-        padding: 20px;
-        width: 100%;
-        box-shadow: 0 32px 60px 3px rgba(0, 0, 0, 0.14),
-                    0 12px 56px 9px rgba(0, 0, 0, 0.12),
-                    0 15px 22px -10px rgba(0, 0, 0, 0.4);
-        z-index: 1000;
-        overflow-y: scroll;
-      }
       paper-fab {
         position: fixed;
+        color: black;
         bottom: 0;
         right: 0;
         margin: 50px;
+      }
+      paper-button {
+        color: var(--accent-color);
+      }
+      paper-input {
+        --paper-input-container-focus-color: var(--app-secondary-color);
       }
     </style>
 
@@ -50,15 +48,7 @@
       handle-as="json"
       last-response="{{res}}"></iron-ajax>
 
-      <!-- <iron-ajax
-        auto
-        url="/delete-student"
-        body='{uid: 2EqFw5sgsuR1Q4uwoR4BO6Ri0d03}'
-        content-type="application/x-www-form-urlencoded"
-        method="post"
-        handle-as="json"></iron-ajax> -->
-
-      <p>Edit students</p>
+      <h2>Edit students</h2>
 
     <div class="main">
 
@@ -76,43 +66,47 @@
 
       <paper-dialog id="edit">
         <h2>Edit Details</h2>
+        <paper-input type="text" id="eFullName" label="Enter full name"></paper-input>
+        <paper-input type="text" id="eEmail" label="Enter email"></paper-input>
+        <paper-input type="password" id="ePass" label="Enter new password"></paper-input>
+        <paper-button on-tap="updateStudent">update details</paper-button>
         <paper-button dialog-dismiss>close</paper-button>
-
       </paper-dialog>
+
       <paper-dialog id="delete">
         <h2>Are you sure you want to delete this student?</h2>
         <paper-button on-tap="deleteStudent">yes</paper-button>
         <paper-button dialog-dismiss>no</paper-button>
-
       </paper-dialog>
+
       <paper-dialog id="create">
-        <h2>Create a new student?</h2>
-        <input type="text" id="fullName" placeholder="Enter full name">
-        <input type="text" id="email" placeholder="Enter email">
-        <input type="text" id="pass" placeholder="Enter password">
+        <h2>Create a new student</h2>
+        <paper-input type="text" id="fullName" label="Enter full name"></paper-input>
+        <paper-input type="text" id="email" label="Enter email"></paper-input>
+        <paper-input type="password" id="pass" label="Enter password"></paper-input>
         <paper-button on-tap="createStudent">Create</paper-button>
         <paper-button dialog-dismiss>cancel</paper-button>
-
-
       </paper-dialog>
 
     </div>
 
     <paper-fab icon="my-icons:add" alt="create a new note" title="create a new note" on-tap="create"></paper-fab>
 
-
   </template>
 
   <script>
     var selectedUid = null;
 
-    class MyView4 extends Polymer.Element {
-      static get is() { return 'my-view4'; }
+    class MyEditStudent extends Polymer.Element {
+      static get is() { return 'my-edit-student'; }
       static get properties(){
         return {
           res: {
             type: Array,
             observer: '_respChanged'
+          },
+          selectedUser: {
+            type: Object
           }
         };
       }
@@ -129,8 +123,23 @@
         ia.generateRequest();
         window.location.reload();
       }
-
-      editDetails(){
+      updateStudent(){
+        var ia = document.createElement('iron-ajax');
+        ia.contentType = 'application/x-www-form-urlencoded';
+        ia.method = 'post';
+        ia.handleAs = 'json';
+        ia.body = {email: this.$.eEmail.value, displayName: this.$.eFullName.value, password: this.$.ePass.value, uid: this.selectedUser.uid};
+        ia.url = '/update-student';
+        ia.generateRequest();
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+      editDetails(e){
+        this.selectedUser = e.model.res;
+        console.log(this.selectedUser);
+        this.$.eEmail.value = this.selectedUser.email;
+        this.$.eFullName.value = this.selectedUser.displayName;
         this.$.edit.opened = true;
       }
 
@@ -159,6 +168,6 @@
       }
     }
 
-    window.customElements.define(MyView4.is, MyView4);
+    window.customElements.define(MyEditStudent.is, MyEditStudent);
   </script>
 </dom-module>

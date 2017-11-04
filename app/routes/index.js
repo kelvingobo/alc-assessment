@@ -1,6 +1,5 @@
-const noteRoutes = require('./resource_routes');
+const noteRoutes = require('./resource');
 
 module.exports = function(app) {
   noteRoutes(app);
-  // Other route groups could go here, in the future
 };

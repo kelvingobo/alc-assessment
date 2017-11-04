@@ -1,0 +1,135 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-new-resource">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      .main {
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        width: 60%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      paper-dropdown-menu {
+        display: block;
+        margin: 5px;
+        --paper-input-container-focus-color: var(--app-secondary-color);
+      }
+      paper-item {
+        cursor: pointer;
+      }
+      input[type=file]{
+        display: block;
+        margin: 5px;
+      }
+      paper-button {
+        background-color: var(--accent-color);
+        margin-top: 10px;
+        width: 50%;
+      }
+      paper-input {
+        --paper-input-container-focus-color: var(--app-secondary-color);
+      }
+      @media (max-width: 400px){
+        .main {
+          width: 100%;
+        }
+      }
+    </style>
+
+    <div class="main">
+
+      <h2>Create a new Student Resource</h2>
+      <p>You can create a new student resource by selecting the type of resource you want and filling the corresponding form</p>
+
+      <paper-dropdown-menu label="Select type of resource" no-animations dynamic-align id="">
+        <paper-listbox slot="dropdown-content" class="dropdown-content" selected="{{selected}}" attr-for-selected="name">
+           <paper-item name="article">Article</paper-item>
+           <paper-item name="video" disabled>Video</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+      <iron-form id="form">
+        <form method="get" action="">
+
+          <paper-input name="title" label="Enter title" hidden="[[!articleSelected]]"></paper-input>
+          <paper-input name="text" label="Enter text" hidden="[[!articleSelected]]"></paper-input>
+
+
+        </form>
+      </iron-form>
+
+      <paper-button raised on-tap="createRes">Create</paper-button>
+
+    </div>
+
+  </template>
+
+  <script>
+    class MyNewResource extends Polymer.Element {
+      static get is() { return 'my-new-resource'; }
+
+      static get properties(){
+        return {
+          selected: {
+            type: String,
+            observer: '_selectedChanged'
+          },
+          articleSelected: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      connectedCallback(){
+        super.connectedCallback();
+        this.$.form.addEventListener('iron-form-presubmit', (event) => {
+          event.preventDefault();
+          var formDetails = this.$.form.serializeForm();
+          console.log(formDetails);
+          var ia = document.createElement('iron-ajax');
+          ia.contentType = 'application/x-www-form-urlencoded';
+          ia.method = 'post';
+          ia.handleAs = 'json';
+          ia.body = formDetails;
+          ia.url = '/create-new-resource';
+          ia.generateRequest();
+          this.$.form.reset();
+          window.history.pushState({}, null, '/list-resources');
+           window.dispatchEvent(new CustomEvent('location-changed'));
+        });
+      }
+
+      createRes(){
+        this.$.form.submit();
+      }
+
+      _selectedChanged(selected){
+        if(selected == 'article'){
+          this.articleSelected = true;
+        }
+        else {
+          this.articleSelected = false;
+        }
+      }
+    }
+
+    window.customElements.define(MyNewResource.is, MyNewResource);
+  </script>
+</dom-module>
