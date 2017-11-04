@@ -37,8 +37,7 @@
       },
       "html": {
         "minify": true
-      },
-      "insertPrefetchLinks": true
+      }
     }
   ],
   "lint": {
