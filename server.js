@@ -1,8 +1,6 @@
 // Node.js notation for importing packages
 const express = require('express');
-const MongoClient    = require('mongodb').MongoClient;
 const bodyParser     = require('body-parser');
-const db             = require('./config/db');
 const fs = require('fs');
 const http = require('http');
 

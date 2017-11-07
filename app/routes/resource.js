@@ -1,9 +1,9 @@
 const admin = require('firebase-admin');
-var serviceAccount = require('../../config/alc-intermediate-assessment-firebase-adminsdk-d65tp-47a6a6f49b.json');
+var serviceAccount = require('../../config/alc-intermediate-assessment-firebase-adminsdk-d65tp-3417497fff.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://alc-intermediate-assessment.firebaseio.com'
+  databaseURL: 'https://alc-intermediate-assessment.firebaseio.com',
 });
 
 var db = admin.database();
@@ -17,7 +17,7 @@ module.exports = function(app) {
       uid: id,
       email: req.body.email,
       displayName: req.body.displayName,
-      password: req.body.password
+      password: req.body.password,
     })
       .then((userRecord) => {
         // See the UserRecord reference doc for the contents of userRecord.
